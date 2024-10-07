@@ -4,6 +4,7 @@ import 'package:chess/chess.dart' as ch;
 import 'package:flutter/material.dart';
 import 'package:online_chess/components/num_col_view.dart';
 import 'package:online_chess/components/letters_row.dart';
+import 'package:online_chess/components/svg_piece.dart';
 
 class ChessBoard extends StatefulWidget {
   const ChessBoard(
@@ -105,14 +106,11 @@ class _ChessBoardState extends State<ChessBoard> {
                           color: _getSqaureColor("$c$r"),
                           child: Builder(builder: (context) {
                             final piece = game.get("$c$r");
-                            return Text(
-                              (piece?.color == ch.Color.WHITE
-                                      ? piece?.type.name.toUpperCase()
-                                      : piece?.type.name.toLowerCase()) ??
-                                  '',
-                              style: TextStyle(
-                                  fontSize: size / 2, color: Colors.red),
-                            );
+                            if (piece != null) {
+                              return svgPicture(piece);
+                            } else {
+                              return Container();
+                            }
                           }),
                         ),
                       ),
