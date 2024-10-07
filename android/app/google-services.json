@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "319361803378",
+    "project_id": "fix-chess",
+    "storage_bucket": "fix-chess.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:319361803378:android:d087db39bc45c3af324eeb",
+        "android_client_info": {
+          "package_name": "com.khalil212.fixchess"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBI-dkhNewNHQmSYkl2pYXdCltPKdqGZX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
