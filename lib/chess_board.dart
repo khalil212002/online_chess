@@ -18,7 +18,6 @@ class ChessBoard extends StatefulWidget {
 class _ChessBoardState extends State<ChessBoard> {
   String? wantToMove;
   List<String>? canMoveTo;
-  static const positionsColor = Color.fromARGB(255, 168, 160, 157);
 
   @override
   void initState() {
@@ -43,7 +42,7 @@ class _ChessBoardState extends State<ChessBoard> {
     if (wantToMove == postion) {
       return Colors.amber;
     } else if (canMoveTo?.contains(postion) ?? false) {
-      return Colors.green;
+      return widget.game.get(postion) == null ? Colors.green : Colors.red;
     }
     return (int.parse(postion[1]) +
                     postion[0].codeUnits.first -
@@ -96,13 +95,13 @@ class _ChessBoardState extends State<ChessBoard> {
               LettersRow(
                   size: size,
                   isWhite: widget.game.isWhite,
-                  color: positionsColor),
+                  color: Colors.white),
               for (final r in !widget.game.isWhite
                   ? const {1, 2, 3, 4, 5, 6, 7, 8}
                   : const {8, 7, 6, 5, 4, 3, 2, 1})
                 Row(
                   children: [
-                    NumColView(size: size, color: positionsColor, num: r),
+                    NumColView(size: size, color: Colors.white, num: r),
                     for (final c in widget.game.isWhite
                         ? const {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
                         : const {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'})
@@ -123,11 +122,11 @@ class _ChessBoardState extends State<ChessBoard> {
                           }),
                         ),
                       ),
-                    NumColView(color: positionsColor, num: r, size: size),
+                    NumColView(color: Colors.white, num: r, size: size),
                   ],
                 ),
               LettersRow(
-                color: positionsColor,
+                color: Colors.white,
                 isWhite: widget.game.isWhite,
                 size: size,
               ),
