@@ -8,13 +8,19 @@ Stream<GameDoc> getGame(DocumentReference<Map<String, dynamic>> ref) {
         final mp = event.data()!;
         if (mp.containsKey('white')) {
           data.white = mp['white'];
+        } else {
+          throw Exception("Game doc doesn't have white field");
         }
         if (mp.containsKey('black')) {
           data.black = mp['black'];
+        } else {
+          throw Exception("Game doc doesn't have black field");
         }
         if (mp.containsKey('pgn')) {
           data.pgn =
               (mp['pgn'] as List<dynamic>).map((e) => e.toString()).toList();
+        } else {
+          throw Exception("Game doc doesn't have pgn field");
         }
       }
       return data;

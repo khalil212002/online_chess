@@ -12,7 +12,10 @@ Future<Map<String, DocumentReference<Map<String, dynamic>>>?>
             MapEntry(key, value as DocumentReference<Map<String, dynamic>>),
       );
       return ref;
+    } else {
+      throw Exception("/games/root doc doesn't have ref field");
     }
+  } else {
+    throw Exception("/games/root doc doesn't exist");
   }
-  return null;
 }
