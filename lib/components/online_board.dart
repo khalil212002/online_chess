@@ -36,7 +36,14 @@ class OnlineBoard extends Chess {
         throw Exception("Player is not white nither black");
       }
       if (snapshot.pgn?.length != move_number) {
-        load_pgn(snapshot.pgn!.join(' '));
+        if (snapshot.pgn?.length == move_number + 1) {
+          super.move(snapshot.pgn!.last.trim().split(' ')[0]);
+        } else {
+          load_pgn(snapshot.pgn!
+              .map((v) => v.trim().split(' ')[0])
+              .toList()
+              .join(' '));
+        }
         update?.call();
       }
     }
