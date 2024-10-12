@@ -39,18 +39,24 @@ class _ChessBoardState extends State<ChessBoard> {
   }
 
   Color _getSqaureColor(String postion) {
-    if (wantToMove == postion) {
-      return Colors.amber;
-    } else if (canMoveTo?.contains(postion) ?? false) {
-      return widget.game.get(postion) == null ? Colors.green : Colors.red;
-    }
-    return (int.parse(postion[1]) +
+    Color cur = (int.parse(postion[1]) +
                     postion[0].codeUnits.first -
                     'a'.codeUnits.first) %
                 2 ==
             0
         ? Colors.white
         : Colors.black;
+
+    if (wantToMove == postion) {
+      return Color.alphaBlend(Colors.amber.withAlpha(230), cur);
+    } else if (canMoveTo?.contains(postion) ?? false) {
+      return Color.alphaBlend(
+          widget.game.get(postion) == null
+              ? Colors.green.withAlpha(230)
+              : Colors.red.withAlpha(230),
+          cur);
+    }
+    return cur;
   }
 
   void _onTap(String position) {
