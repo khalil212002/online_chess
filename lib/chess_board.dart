@@ -4,24 +4,18 @@ import 'package:chess/chess.dart' as ch;
 import 'package:flutter/material.dart';
 import 'package:online_chess/components/num_col_view.dart';
 import 'package:online_chess/components/letters_row.dart';
+import 'package:online_chess/components/online_board.dart';
 import 'package:online_chess/components/svg_piece.dart';
 
 class ChessBoard extends StatefulWidget {
-  const ChessBoard(
-      {super.key,
-      required this.isWhite,
-      required this.pgn,
-      required this.moveFun});
-  final bool isWhite;
-  final String pgn;
-  final Function(String) moveFun;
+  const ChessBoard({super.key, required this.game});
+  final OnlineBoard game;
 
   @override
   State<ChessBoard> createState() => _ChessBoardState();
 }
 
 class _ChessBoardState extends State<ChessBoard> {
-  late final ch.Chess game;
   String? wantToMove;
   List<String>? canMoveTo;
   static const positionsColor = Color.fromARGB(255, 168, 160, 157);
@@ -29,7 +23,20 @@ class _ChessBoardState extends State<ChessBoard> {
   @override
   void initState() {
     super.initState();
-    game = ch.Chess();
+    widget.game.init();
+    widget.game.setListener(() {
+      if (context.mounted) {
+        setState(() {
+          widget.game;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.game.dispose();
+    super.dispose();
   }
 
   Color _getSqaureColor(String postion) {
@@ -48,15 +55,17 @@ class _ChessBoardState extends State<ChessBoard> {
   }
 
   void _onTap(String position) {
-    if (game.turn == (widget.isWhite ? ch.Color.WHITE : ch.Color.BLACK)) {
+    if (widget.game.turn ==
+        (widget.game.isWhite ? ch.Color.WHITE : ch.Color.BLACK)) {
       if (wantToMove == position) {
         setState(() {
           wantToMove = null;
           canMoveTo = null;
         });
-      } else if (game.get(position)?.color ==
-          (widget.isWhite ? ch.Color.WHITE : ch.Color.BLACK)) {
-        final moves = game.generate_moves(<String, String>{'square': position});
+      } else if (widget.game.get(position)?.color ==
+          (widget.game.isWhite ? ch.Color.WHITE : ch.Color.BLACK)) {
+        final moves =
+            widget.game.generate_moves(<String, String>{'square': position});
 
         setState(() {
           wantToMove = position;
@@ -64,9 +73,8 @@ class _ChessBoardState extends State<ChessBoard> {
         });
       } else if (canMoveTo?.contains(position) ?? false) {
         setState(() {
-          game.move(<String, String>{'from': wantToMove ?? '', 'to': position});
-          final move = game.pgn().split(' ').last;
-          widget.moveFun(move);
+          widget.game
+              .move(<String, String>{'from': wantToMove ?? '', 'to': position});
           wantToMove = null;
           canMoveTo = null;
         });
@@ -76,7 +84,6 @@ class _ChessBoardState extends State<ChessBoard> {
 
   @override
   Widget build(BuildContext context) {
-    game.load_pgn(widget.pgn);
     final win = MediaQuery.of(context).size;
     final size = min(win.width, win.height);
     return Center(
@@ -87,14 +94,16 @@ class _ChessBoardState extends State<ChessBoard> {
           child: Column(
             children: [
               LettersRow(
-                  size: size, isWhite: widget.isWhite, color: positionsColor),
-              for (final r in !widget.isWhite
+                  size: size,
+                  isWhite: widget.game.isWhite,
+                  color: positionsColor),
+              for (final r in !widget.game.isWhite
                   ? const {1, 2, 3, 4, 5, 6, 7, 8}
                   : const {8, 7, 6, 5, 4, 3, 2, 1})
                 Row(
                   children: [
                     NumColView(size: size, color: positionsColor, num: r),
-                    for (final c in widget.isWhite
+                    for (final c in widget.game.isWhite
                         ? const {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
                         : const {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'})
                       InkWell(
@@ -105,7 +114,7 @@ class _ChessBoardState extends State<ChessBoard> {
                           height: size,
                           color: _getSqaureColor("$c$r"),
                           child: Builder(builder: (context) {
-                            final piece = game.get("$c$r");
+                            final piece = widget.game.get("$c$r");
                             if (piece != null) {
                               return svgPicture(piece);
                             } else {
@@ -119,7 +128,7 @@ class _ChessBoardState extends State<ChessBoard> {
                 ),
               LettersRow(
                 color: positionsColor,
-                isWhite: widget.isWhite,
+                isWhite: widget.game.isWhite,
                 size: size,
               ),
             ],
