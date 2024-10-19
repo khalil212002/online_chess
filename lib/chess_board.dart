@@ -2,11 +2,14 @@ import 'dart:math';
 
 import 'package:chess/chess.dart' as ch;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:online_chess/components/loading_text.dart';
 import 'package:online_chess/components/num_col_view.dart';
 import 'package:online_chess/components/letters_row.dart';
 import 'package:online_chess/components/online_board.dart';
+import 'package:online_chess/components/promotion_dialog.dart';
 import 'package:online_chess/components/svg_piece.dart';
+import 'package:online_chess/utils/piece_2_image.dart';
 
 class ChessBoard extends StatefulWidget {
   const ChessBoard({super.key, required this.game});
@@ -79,19 +82,27 @@ class _ChessBoardState extends State<ChessBoard> {
       });
     } else if (moveTo != null) {
       if (moveTo.flags & ch.Chess.BITS_PROMOTION != 0) {
+        showDialog(
+            context: context,
+            builder: (context) => promotionDialog(
+                  isWhite: widget.game.isWhite,
+                  onTap: (p0) {
+                    setState(() {
+                      widget.game.move({
+                        'from': moveTo.fromAlgebraic,
+                        'to': moveTo.toAlgebraic,
+                        'promotion': p0
+                      });
+                      moveOptions = null;
+                    });
+                  },
+                ));
+      } else {
         setState(() {
-          widget.game.move({
-            'from': moveTo!.fromAlgebraic,
-            'to': moveTo!.toAlgebraic,
-            'promotion': 'queen'
-          });
+          widget.game.move(moveTo);
           moveOptions = null;
         });
       }
-      setState(() {
-        widget.game.move(moveTo);
-        moveOptions = null;
-      });
     } else {
       setState(() {
         moveOptions =
