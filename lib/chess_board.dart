@@ -2,14 +2,12 @@ import 'dart:math';
 
 import 'package:chess/chess.dart' as ch;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:online_chess/components/loading_text.dart';
 import 'package:online_chess/components/num_col_view.dart';
 import 'package:online_chess/components/letters_row.dart';
 import 'package:online_chess/components/online_board.dart';
 import 'package:online_chess/components/promotion_dialog.dart';
 import 'package:online_chess/components/svg_piece.dart';
-import 'package:online_chess/utils/piece_2_image.dart';
 
 class ChessBoard extends StatefulWidget {
   const ChessBoard({super.key, required this.game});
@@ -84,7 +82,7 @@ class _ChessBoardState extends State<ChessBoard> {
       if (moveTo.flags & ch.Chess.BITS_PROMOTION != 0) {
         showDialog(
             context: context,
-            builder: (context) => promotionDialog(
+            builder: (context) => PromotionDialog(
                   isWhite: widget.game.isWhite,
                   onTap: (p0) {
                     setState(() {

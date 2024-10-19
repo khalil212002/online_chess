@@ -2,10 +2,10 @@ import 'package:chess/chess.dart' as ch;
 import 'package:flutter/material.dart';
 import 'package:online_chess/components/svg_piece.dart';
 
-class promotionDialog extends StatelessWidget {
+class PromotionDialog extends StatelessWidget {
   final bool isWhite;
   final Function(String) onTap;
-  const promotionDialog(
+  const PromotionDialog(
       {super.key, required this.isWhite, required this.onTap});
 
   @override
