@@ -24,6 +24,14 @@ class OnlineBoard extends Chess {
     _stream = getGame(_doc).listen(_onData);
   }
 
+  bool isTurn() {
+    return turn == (isWhite ? Color.WHITE : Color.BLACK);
+  }
+
+  bool isMate() {
+    return king_attacked((isWhite ? Color.WHITE : Color.BLACK));
+  }
+
   void _onData(GameDoc snapshot) {
     if (snapshot.isValid()) {
       if (snapshot.black == FirebaseAuth.instance.currentUser?.uid) {
@@ -55,7 +63,12 @@ class OnlineBoard extends Chess {
     if (result) {
       _doc.update({
         "pgn": FieldValue.arrayUnion([pgn().trim().split(' ').last])
-      });
+      }).onError(
+        (error, stackTrace) {
+          throw Exception(
+              "Couldn't write ${pgn().trim().split(' ').last} to the server\n${error.toString()}");
+        },
+      );
     }
     return result;
   }

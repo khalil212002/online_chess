@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:chess/chess.dart' as ch;
 import 'package:flutter/material.dart';
+import 'package:online_chess/components/loading_text.dart';
 import 'package:online_chess/components/num_col_view.dart';
 import 'package:online_chess/components/letters_row.dart';
 import 'package:online_chess/components/online_board.dart';
@@ -98,6 +99,24 @@ class _ChessBoardState extends State<ChessBoard> {
           color: const Color.fromARGB(255, 41, 24, 22),
           child: Column(
             children: [
+              Container(
+                color: Theme.of(context).primaryColor,
+                width: size * 10,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    LoadingText(
+                      text: widget.game.isTurn() ? "Your Turn" : "",
+                      style:
+                          const TextStyle(fontSize: 200, color: Colors.green),
+                    ),
+                    LoadingText(
+                      text: widget.game.isMate() ? "Mate" : "",
+                      style: const TextStyle(fontSize: 200, color: Colors.red),
+                    )
+                  ],
+                ),
+              ),
               LettersRow(
                   size: size,
                   isWhite: widget.game.isWhite,
