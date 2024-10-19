@@ -17,8 +17,7 @@ class ChessBoard extends StatefulWidget {
 }
 
 class _ChessBoardState extends State<ChessBoard> {
-  String? wantToMove;
-  List<String>? canMoveTo;
+  List<ch.Move>? moveOptions;
 
   @override
   void initState() {
@@ -48,9 +47,11 @@ class _ChessBoardState extends State<ChessBoard> {
         ? Colors.white
         : Colors.black;
 
-    if (wantToMove == postion) {
+    if (moveOptions?.any((element) => element.fromAlgebraic == postion) ==
+        true) {
       return Color.alphaBlend(Colors.amber.withAlpha(230), cur);
-    } else if (canMoveTo?.contains(postion) ?? false) {
+    } else if (moveOptions?.any((element) => element.toAlgebraic == postion) ??
+        false) {
       return Color.alphaBlend(
           widget.game.get(postion) == null
               ? Colors.green.withAlpha(230)
@@ -61,30 +62,41 @@ class _ChessBoardState extends State<ChessBoard> {
   }
 
   void _onTap(String position) {
-    if (widget.game.turn ==
-        (widget.game.isWhite ? ch.Color.WHITE : ch.Color.BLACK)) {
-      if (wantToMove == position) {
-        setState(() {
-          wantToMove = null;
-          canMoveTo = null;
-        });
-      } else if (widget.game.get(position)?.color ==
-          (widget.game.isWhite ? ch.Color.WHITE : ch.Color.BLACK)) {
-        final moves =
-            widget.game.generate_moves(<String, String>{'square': position});
+    if (!widget.game.isTurn()) {
+      moveOptions = null;
+      return;
+    }
+    ch.Move? moveTo = moveOptions
+        ?.where((element) => element.toAlgebraic == position)
+        .firstOrNull;
+    ch.Move? moveFrom = moveOptions
+        ?.where((element) => element.fromAlgebraic == position)
+        .firstOrNull;
 
+    if (moveFrom != null) {
+      setState(() {
+        moveOptions = null;
+      });
+    } else if (moveTo != null) {
+      if (moveTo.flags & ch.Chess.BITS_PROMOTION != 0) {
         setState(() {
-          wantToMove = position;
-          canMoveTo = moves.map<String>((m) => m.toAlgebraic).toList();
-        });
-      } else if (canMoveTo?.contains(position) ?? false) {
-        setState(() {
-          widget.game
-              .move(<String, String>{'from': wantToMove ?? '', 'to': position});
-          wantToMove = null;
-          canMoveTo = null;
+          widget.game.move({
+            'from': moveTo!.fromAlgebraic,
+            'to': moveTo!.toAlgebraic,
+            'promotion': 'queen'
+          });
+          moveOptions = null;
         });
       }
+      setState(() {
+        widget.game.move(moveTo);
+        moveOptions = null;
+      });
+    } else {
+      setState(() {
+        moveOptions =
+            widget.game.generate_moves(<String, String>{'square': position});
+      });
     }
   }
 
