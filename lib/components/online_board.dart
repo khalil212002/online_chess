@@ -10,6 +10,7 @@ class OnlineBoard extends Chess {
   StreamSubscription<GameDoc>? _stream;
   late bool _isWhite;
   Function? update;
+  List? firestorePgn;
 
   OnlineBoard({required DocumentReference<Map<String, dynamic>> doc})
       : _doc = doc {
@@ -44,6 +45,7 @@ class OnlineBoard extends Chess {
         throw Exception("Player is not white nither black");
       }
       if (snapshot.pgn?.length != move_number) {
+        firestorePgn = snapshot.pgn;
         if (snapshot.pgn?.length == move_number + 1) {
           super.move(snapshot.pgn!.last.trim().split(' ')[0]);
         } else {
@@ -61,9 +63,8 @@ class OnlineBoard extends Chess {
   bool move(dynamic move) {
     bool result = super.move(move);
     if (result) {
-      _doc.update({
-        "pgn": FieldValue.arrayUnion([pgn().trim().split(' ').last])
-      }).onError(
+      firestorePgn?.add(pgn().trim().split(' ').last);
+      _doc.update({"pgn": firestorePgn}).onError(
         (error, stackTrace) {
           throw Exception(
               "Couldn't write ${pgn().trim().split(' ').last} to the server\n${error.toString()}");
