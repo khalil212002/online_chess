@@ -63,7 +63,10 @@ class OnlineBoard extends Chess {
   bool move(dynamic move) {
     bool result = super.move(move);
     if (result) {
+      firestorePgn ??= <dynamic>[""];
+
       firestorePgn?.add(pgn().trim().split(' ').last);
+
       _doc.update({"pgn": firestorePgn}).onError(
         (error, stackTrace) {
           throw Exception(
