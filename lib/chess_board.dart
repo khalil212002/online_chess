@@ -54,7 +54,13 @@ class _ChessBoardState extends State<ChessBoard> {
     } else if (moveOptions?.any((element) => element.toAlgebraic == postion) ??
         false) {
       return Color.alphaBlend(
-          widget.game.get(postion) == null
+          moveOptions
+                      ?.where(
+                        (element) => element.toAlgebraic == postion,
+                      )
+                      .firstOrNull
+                      ?.captured ==
+                  null
               ? Colors.green.withAlpha(230)
               : Colors.red.withAlpha(230),
           cur);
